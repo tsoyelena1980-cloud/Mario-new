@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pixel Quest — 2D Platformer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="game-wrapper">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- ===== HUD ===== -->
+    <div id="hud" class="hidden">
+        <div class="hud-item"><span class="hud-label">СЧЁТ</span><span id="hud-score">0</span></div>
+        <div class="hud-item"><span class="hud-label">МОНЕТЫ</span><span id="hud-coins">0</span></div>
+        <div class="hud-item"><span class="hud-label">ЖИЗНИ</span><span id="hud-lives">3</span></div>
+        <div class="hud-item"><span class="hud-label">УРОВЕНЬ</span><span id="hud-level">1</span></div>
+        <div class="hud-item"><span class="hud-label">ВРЕМЯ</span><span id="hud-time">300</span></div>
+        <div class="hud-item"><span class="hud-label">РЕКОРД</span><span id="hud-best">0</span></div>
+    </div>
+
+    <!-- ===== MAIN MENU ===== -->
+    <div id="main-menu" class="screen">
+        <div class="menu-inner">
+            <h1 class="game-title">PIXEL<span>QUEST</span></h1>
+            <p class="game-subtitle">Приключение в мире пикселей</p>
+            <div class="menu-buttons">
+                <button class="btn btn-primary" id="btn-play">▶ Играть</button>
+                <button class="btn" id="btn-continue" style="display:none;">⏩ Продолжить</button>
+                <button class="btn" id="btn-records">🏆 Рекорды</button>
+                <button class="btn" id="btn-settings">⚙ Настройки</button>
+            </div>
+            <div class="controls-hint">
+                <p><b>Управление:</b></p>
+                <p>A / ← — влево &nbsp;•&nbsp; D / → — вправо</p>
+                <p>Space / W / ↑ — прыжок &nbsp;•&nbsp; Shift — бег</p>
+                <p>Esc / P — пауза &nbsp;•&nbsp; R — рестарт</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PAUSE ===== -->
+    <div id="pause-screen" class="screen hidden">
+        <div class="menu-inner">
+            <h2 class="screen-title">ПАУЗА</h2>
+            <div class="menu-buttons">
+                <button class="btn btn-primary" id="btn-resume">▶ Продолжить</button>
+                <button class="btn" id="btn-restart-level">↻ Заново</button>
+                <button class="btn" id="btn-to-menu">⌂ В меню</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== GAME OVER ===== -->
+    <div id="gameover-screen" class="screen hidden">
+        <div class="menu-inner">
+            <h2 class="screen-title danger">ИГРА ОКОНЧЕНА</h2>
+            <div class="stats-box">
+                <p>Очки: <span id="go-score">0</span></p>
+                <p>Уровень: <span id="go-level">1</span></p>
+                <p>Монеты: <span id="go-coins">0</span></p>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn btn-primary" id="btn-retry">↻ Повторить</button>
+                <button class="btn" id="btn-go-menu">⌂ Главное меню</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== VICTORY ===== -->
+    <div id="victory-screen" class="screen hidden">
+        <div class="menu-inner">
+            <h2 class="screen-title victory">ПОБЕДА!</h2>
+            <div class="stats-box">
+                <p>Итоговый счёт: <span id="win-score">0</span></p>
+                <p>Собрано монет: <span id="win-coins">0</span></p>
+                <p>Время: <span id="win-time">0</span> сек</p>
+            </div>
+            <div class="save-record-box">
+                <input type="text" id="record-name" maxlength="16" placeholder="Введите имя">
+                <button class="btn btn-primary" id="btn-save-record">💾 Сохранить рекорд</button>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn" id="btn-win-menu">⌂ Главное меню</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RECORDS ===== -->
+    <div id="records-screen" class="screen hidden">
+        <div class="menu-inner wide">
+            <h2 class="screen-title">🏆 ТАБЛИЦА РЕКОРДОВ</h2>
+            <div class="records-table-wrap">
+                <table id="records-table">
+                    <thead>
+                        <tr><th>#</th><th>Имя</th><th>Очки</th><th>Дата</th></tr>
+                    </thead>
+                    <tbody id="records-body"></tbody>
+                </table>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn btn-danger" id="btn-reset-records">🗑 Сбросить рекорды</button>
+                <button class="btn" id="btn-records-back">← Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div id="settings-screen" class="screen hidden">
+        <div class="menu-inner">
+            <h2 class="screen-title">⚙ НАСТРОЙКИ</h2>
+            <div class="settings-list">
+                <label class="setting-row">
+                    <span>Звук</span>
+                    <input type="checkbox" id="opt-sound" checked>
+                </label>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn" id="btn-settings-back">← Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MOBILE CONTROLS ===== -->
+    <div id="mobile-controls" class="hidden">
+        <div class="touch-left">
+            <button class="touch-btn" data-key="left">◀</button>
+            <button class="touch-btn" data-key="right">▶</button>
+        </div>
+        <div class="touch-right">
+            <button class="touch-btn" data-key="run">⚡</button>
+            <button class="touch-btn jump" data-key="jump">▲</button>
+        </div>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
